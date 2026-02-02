@@ -273,8 +273,6 @@ data class AutoBidDto(
 )
 
 data class AutoBidRequest(
-    @SerializedName("listing_id")
-    val listingId: Int,
     @SerializedName("max_amount")
     val maxAmount: String
 )

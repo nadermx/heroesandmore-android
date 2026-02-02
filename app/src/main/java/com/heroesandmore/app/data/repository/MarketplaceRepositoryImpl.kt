@@ -55,6 +55,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete listing")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -75,6 +76,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete image")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -124,6 +126,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to save listing")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -133,6 +136,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to unsave listing")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -194,7 +198,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setAutoBid(listingId: Int, maxAmount: String): Resource<AutoBidDto> {
-        return safeApiCall { marketplaceApi.setAutoBid(AutoBidRequest(listingId, maxAmount)) }
+        return safeApiCall { marketplaceApi.setAutoBid(listingId, AutoBidRequest(maxAmount)) }
     }
 
     override suspend fun getAutoBids(): Resource<List<AutoBidDto>> {
@@ -207,6 +211,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to cancel auto-bid")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 

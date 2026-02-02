@@ -37,14 +37,20 @@ interface MarketplaceApi {
     suspend fun deleteListing(@Path("id") id: Int): Response<Unit>
 
     @POST("marketplace/listings/{id}/publish/")
-    suspend fun publishListing(@Path("id") id: Int): Response<StatusResponse>
+    suspend fun publishListing(@Path("id") id: Int): Response<ListingDto>
 
     @Multipart
     @POST("marketplace/listings/{id}/images/")
-    suspend fun uploadListingImage(
+    suspend fun uploadImage(
         @Path("id") listingId: Int,
         @Part image: MultipartBody.Part
-    ): Response<ImageUploadResponse>
+    ): Response<ListingImageDto>
+
+    @DELETE("marketplace/listings/{listingId}/images/{imageId}/")
+    suspend fun deleteImage(
+        @Path("listingId") listingId: Int,
+        @Path("imageId") imageId: Int
+    ): Response<Unit>
 
     // Bids
     @POST("marketplace/listings/{id}/bid/")
@@ -54,7 +60,7 @@ interface MarketplaceApi {
     ): Response<BidDto>
 
     @GET("marketplace/listings/{id}/bids/")
-    suspend fun getBids(@Path("id") listingId: Int): Response<List<BidDto>>
+    suspend fun getBidHistory(@Path("id") listingId: Int): Response<List<BidDto>>
 
     // Offers
     @POST("marketplace/listings/{id}/offer/")
@@ -67,10 +73,10 @@ interface MarketplaceApi {
     suspend fun getOffers(): Response<PaginatedResponse<OfferDto>>
 
     @POST("marketplace/offers/{id}/accept/")
-    suspend fun acceptOffer(@Path("id") offerId: Int): Response<StatusResponse>
+    suspend fun acceptOffer(@Path("id") offerId: Int): Response<OfferDto>
 
     @POST("marketplace/offers/{id}/decline/")
-    suspend fun declineOffer(@Path("id") offerId: Int): Response<StatusResponse>
+    suspend fun declineOffer(@Path("id") offerId: Int): Response<OfferDto>
 
     @POST("marketplace/offers/{id}/counter/")
     suspend fun counterOffer(
@@ -79,8 +85,8 @@ interface MarketplaceApi {
     ): Response<OfferDto>
 
     // Save/Unsave
-    @GET("marketplace/listings/{id}/save/")
-    suspend fun isSaved(@Path("id") listingId: Int): Response<SavedStatusResponse>
+    @GET("marketplace/listings/{id}/saved/")
+    suspend fun isListingSaved(@Path("id") listingId: Int): Response<SavedStatusResponse>
 
     @POST("marketplace/listings/{id}/save/")
     suspend fun saveListing(@Path("id") listingId: Int): Response<StatusResponse>
@@ -89,11 +95,14 @@ interface MarketplaceApi {
     suspend fun unsaveListing(@Path("id") listingId: Int): Response<Unit>
 
     @GET("marketplace/saved/")
-    suspend fun getSavedListings(): Response<PaginatedResponse<SavedListingDto>>
+    suspend fun getSavedListings(
+        @Query("page") page: Int = 1
+    ): Response<PaginatedResponse<ListingDto>>
 
     // Orders
     @GET("marketplace/orders/")
     suspend fun getOrders(
+        @Query("page") page: Int = 1,
         @Query("role") role: String? = null,
         @Query("status") status: String? = null
     ): Response<PaginatedResponse<OrderDto>>
@@ -104,28 +113,57 @@ interface MarketplaceApi {
     @POST("marketplace/orders/{id}/ship/")
     suspend fun shipOrder(
         @Path("id") orderId: Int,
-        @Body shipment: ShipmentRequest
+        @Body shipment: ShipOrderRequest
     ): Response<OrderDto>
 
     @POST("marketplace/orders/{id}/received/")
     suspend fun confirmReceived(@Path("id") orderId: Int): Response<OrderDto>
 
     @POST("marketplace/orders/{id}/review/")
-    suspend fun leaveReview(
+    suspend fun createReview(
         @Path("id") orderId: Int,
-        @Body review: ReviewRequest
+        @Body review: CreateReviewRequest
     ): Response<ReviewDto>
+
+    // Checkout
+    @POST("marketplace/checkout/{listingId}/")
+    suspend fun checkout(
+        @Path("listingId") listingId: Int,
+        @Body request: CheckoutRequest
+    ): Response<OrderDto>
+
+    @POST("marketplace/payment/intent/")
+    suspend fun createPaymentIntent(@Body request: PaymentIntentRequest): Response<PaymentIntentResponse>
+
+    @POST("marketplace/payment/confirm/")
+    suspend fun confirmPayment(@Body request: ConfirmPaymentRequest): Response<OrderDto>
 
     // Auctions
     @GET("marketplace/auctions/events/")
     suspend fun getAuctionEvents(): Response<List<AuctionEventDto>>
 
-    @GET("marketplace/auctions/events/{slug}/")
-    suspend fun getAuctionEvent(@Path("slug") slug: String): Response<AuctionEventDto>
+    @GET("marketplace/auctions/events/{id}/")
+    suspend fun getAuctionEventDetail(@Path("id") id: Int): Response<AuctionEventDto>
 
-    @GET("marketplace/auctions/events/{slug}/lots/")
-    suspend fun getAuctionLots(@Path("slug") slug: String): Response<PaginatedResponse<ListingDto>>
+    @GET("marketplace/auctions/events/{eventId}/lots/")
+    suspend fun getAuctionLots(
+        @Path("eventId") eventId: Int,
+        @Query("page") page: Int = 1
+    ): Response<PaginatedResponse<ListingDto>>
 
     @GET("marketplace/auctions/ending-soon/")
     suspend fun getEndingSoon(): Response<List<ListingDto>>
+
+    // Auto-bid
+    @POST("marketplace/listings/{id}/autobid/")
+    suspend fun setAutoBid(
+        @Path("id") listingId: Int,
+        @Body request: AutoBidRequest
+    ): Response<AutoBidDto>
+
+    @GET("marketplace/auctions/autobid/")
+    suspend fun getAutoBids(): Response<List<AutoBidDto>>
+
+    @DELETE("marketplace/auctions/autobid/{id}/")
+    suspend fun cancelAutoBid(@Path("id") id: Int): Response<Unit>
 }
