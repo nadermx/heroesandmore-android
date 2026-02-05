@@ -28,7 +28,7 @@ interface AlertsApi {
     suspend fun createWishlist(@Body request: CreateWishlistRequest): Response<WishlistDto>
 
     @GET("alerts/wishlists/{id}/")
-    suspend fun getWishlist(@Path("id") id: Int): Response<WishlistDto>
+    suspend fun getWishlist(@Path("id") id: Int): Response<WishlistDetailDto>
 
     @PATCH("alerts/wishlists/{id}/")
     suspend fun updateWishlist(

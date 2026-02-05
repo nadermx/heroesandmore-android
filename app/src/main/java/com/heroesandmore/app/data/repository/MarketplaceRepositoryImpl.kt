@@ -115,6 +115,21 @@ class MarketplaceRepositoryImpl @Inject constructor(
         return result.map { it.toOffer() }
     }
 
+    override suspend fun acceptCounterOffer(offerId: Int): Resource<Int> {
+        val result = safeApiCall { marketplaceApi.acceptCounterOffer(offerId) }
+        return result.map { it.orderId }
+    }
+
+    override suspend fun declineCounterOffer(offerId: Int): Resource<Boolean> {
+        val result = safeApiCall { marketplaceApi.declineCounterOffer(offerId) }
+        return when (result) {
+            is Resource.Success -> Resource.success(true)
+            is Resource.Error -> Resource.error(result.message ?: "Failed to decline counter-offer")
+            is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
+        }
+    }
+
     override suspend fun isListingSaved(listingId: Int): Resource<Boolean> {
         val result = safeApiCall { marketplaceApi.isListingSaved(listingId) }
         return result.map { it.isSaved }
@@ -284,13 +299,20 @@ class MarketplaceRepositoryImpl @Inject constructor(
 
     private fun OfferDto.toOffer(): Offer = Offer(
         id = id,
-        listingId = listing,
-        listingTitle = listingTitle,
+        listing = OfferListing(
+            id = listing.id,
+            title = listing.title,
+            price = listing.price,
+            imageUrl = listing.imageUrl
+        ),
         amount = amount,
         message = message,
         buyerUsername = buyerUsername,
         status = OfferStatus.fromString(status),
+        isFromBuyer = isFromBuyer,
         counterAmount = counterAmount,
+        counterMessage = counterMessage,
+        timeRemaining = timeRemaining,
         created = created
     )
 

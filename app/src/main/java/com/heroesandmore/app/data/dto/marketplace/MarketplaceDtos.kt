@@ -128,18 +128,32 @@ data class BidRequest(
     val amount: String
 )
 
+data class OfferListingDto(
+    val id: Int,
+    val title: String,
+    val price: String,
+    @SerializedName("image_url")
+    val imageUrl: String?
+)
+
 data class OfferDto(
     val id: Int,
-    val listing: Int,
-    @SerializedName("listing_title")
-    val listingTitle: String,
+    val listing: OfferListingDto,
     val amount: String,
     val message: String?,
     @SerializedName("buyer_username")
     val buyerUsername: String,
     val status: String,
+    @SerializedName("is_from_buyer")
+    val isFromBuyer: Boolean,
     @SerializedName("counter_amount")
     val counterAmount: String?,
+    @SerializedName("counter_message")
+    val counterMessage: String?,
+    @SerializedName("time_remaining")
+    val timeRemaining: String?,
+    @SerializedName("expires_at")
+    val expiresAt: String?,
     val created: String
 )
 
@@ -285,4 +299,10 @@ data class SavedStatusResponse(
 data class StatusResponse(
     val status: String,
     val message: String?
+)
+
+data class AcceptCounterResponse(
+    val status: String,
+    @SerializedName("order_id")
+    val orderId: Int
 )

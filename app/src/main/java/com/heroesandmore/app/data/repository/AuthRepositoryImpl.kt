@@ -37,11 +37,13 @@ class AuthRepositoryImpl @Inject constructor(
                         }
                         is Resource.Error -> Resource.error(profileResult.message ?: "Failed to get user profile")
                         is Resource.Loading -> Resource.loading()
+                        else -> Resource.error("Unknown error")
                     }
                 } ?: Resource.error("Login failed")
             }
             is Resource.Error -> Resource.error(result.message ?: "Login failed")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -49,13 +51,14 @@ class AuthRepositoryImpl @Inject constructor(
         val result = safeApiCall { authApi.register(RegisterRequest(username, email, password)) }
         return when (result) {
             is Resource.Success -> {
-                result.data?.let { response ->
+                result.data?.let { _ ->
                     // Auto-login after registration
                     login(username, password)
                 } ?: Resource.error("Registration failed")
             }
             is Resource.Error -> Resource.error(result.message ?: "Registration failed")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -75,6 +78,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Resource.error(result.message ?: "Token refresh failed")
             }
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -100,11 +104,13 @@ class AuthRepositoryImpl @Inject constructor(
                         }
                         is Resource.Error -> Resource.error(profileResult.message ?: "Failed to get user profile")
                         is Resource.Loading -> Resource.loading()
+                        else -> Resource.error("Unknown error")
                     }
                 } ?: Resource.error("Google auth failed")
             }
             is Resource.Error -> Resource.error(result.message ?: "Google auth failed")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -114,6 +120,7 @@ class AuthRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to request password reset")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -123,6 +130,7 @@ class AuthRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to reset password")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -132,6 +140,7 @@ class AuthRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to change password")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 

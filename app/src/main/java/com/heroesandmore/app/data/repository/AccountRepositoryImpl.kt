@@ -2,7 +2,11 @@ package com.heroesandmore.app.data.repository
 
 import com.heroesandmore.app.data.api.AuthApi
 import com.heroesandmore.app.data.dto.accounts.*
-import com.heroesandmore.app.domain.model.*
+import com.heroesandmore.app.domain.model.User
+import com.heroesandmore.app.domain.model.PublicProfile
+import com.heroesandmore.app.domain.model.Listing
+import com.heroesandmore.app.domain.model.ListingType
+import com.heroesandmore.app.domain.model.Review
 import com.heroesandmore.app.domain.repository.AccountRepository
 import com.heroesandmore.app.util.Resource
 import com.heroesandmore.app.util.safeApiCall
@@ -63,7 +67,7 @@ class AccountRepositoryImpl @Inject constructor(
         return result.map { response -> response.results.map { it.toListing() } }
     }
 
-    override suspend fun getUserCollections(username: String): Resource<List<Collection>> {
+    override suspend fun getUserCollections(username: String): Resource<List<com.heroesandmore.app.domain.model.Collection>> {
         val result = safeApiCall { authApi.getUserCollections(username) }
         return result.map { collections -> collections.map { it.toCollection() } }
     }
@@ -83,6 +87,7 @@ class AccountRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to clear recently viewed")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -92,6 +97,7 @@ class AccountRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to register device token")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -101,6 +107,7 @@ class AccountRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to remove device token")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -146,18 +153,19 @@ class AccountRepositoryImpl @Inject constructor(
         created = created
     )
 
-    private fun com.heroesandmore.app.data.dto.collections.CollectionDto.toCollection(): Collection = Collection(
-        id = id,
-        name = name,
-        description = description,
-        isPublic = isPublic,
-        ownerUsername = ownerUsername,
-        itemCount = itemCount,
-        totalValue = totalValue,
-        totalCost = totalCost,
-        gainLoss = gainLoss,
-        created = created
-    )
+    private fun com.heroesandmore.app.data.dto.collections.CollectionDto.toCollection(): com.heroesandmore.app.domain.model.Collection = 
+        com.heroesandmore.app.domain.model.Collection(
+            id = id,
+            name = name,
+            description = description,
+            isPublic = isPublic,
+            ownerUsername = ownerUsername,
+            itemCount = itemCount,
+            totalValue = totalValue,
+            totalCost = totalCost,
+            gainLoss = gainLoss,
+            created = created
+        )
 
     private fun com.heroesandmore.app.data.dto.marketplace.ReviewDto.toReview(): Review = Review(
         id = id,

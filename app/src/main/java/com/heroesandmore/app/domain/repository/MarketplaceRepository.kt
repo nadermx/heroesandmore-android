@@ -36,6 +36,8 @@ interface MarketplaceRepository {
     suspend fun acceptOffer(offerId: Int): Resource<Offer>
     suspend fun declineOffer(offerId: Int): Resource<Offer>
     suspend fun counterOffer(offerId: Int, amount: String): Resource<Offer>
+    suspend fun acceptCounterOffer(offerId: Int): Resource<Int>  // Returns orderId
+    suspend fun declineCounterOffer(offerId: Int): Resource<Boolean>
 
     // Saved Listings
     suspend fun isListingSaved(listingId: Int): Resource<Boolean>

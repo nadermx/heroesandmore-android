@@ -1,6 +1,7 @@
 package com.heroesandmore.app.presentation.screens.listing
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,7 +22,7 @@ import com.heroesandmore.app.domain.model.ListingDetail
 import com.heroesandmore.app.domain.model.ListingType
 import com.heroesandmore.app.presentation.components.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ListingDetailScreen(
     listingId: Int,
@@ -292,6 +293,7 @@ private fun ListingDetailContent(
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun ImageGallery(
     images: List<String>,
     modifier: Modifier = Modifier
@@ -346,6 +348,7 @@ private fun ImageGallery(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SellerCard(
     seller: com.heroesandmore.app.domain.model.PublicProfile,

@@ -1,5 +1,6 @@
 package com.heroesandmore.app.presentation.screens.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -130,7 +131,7 @@ fun ProfileScreen(
                 }
 
                 item {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                 }
 
                 item {
@@ -154,7 +155,7 @@ fun ProfileScreen(
                 }
 
                 item {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                 }
 
                 item {
@@ -176,7 +177,7 @@ fun ProfileScreen(
                 }
 
                 item {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                 }
 
                 item {
@@ -258,6 +259,7 @@ private fun ProfileHeader(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileMenuItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -293,12 +295,5 @@ private fun ProfileMenuItem(
             }
         },
         modifier = Modifier.clickable(onClick = onClick)
-    )
-}
-
-@Composable
-private fun Modifier.clickable(onClick: () -> Unit): Modifier {
-    return this.then(
-        androidx.compose.foundation.clickable(onClick = onClick)
     )
 }

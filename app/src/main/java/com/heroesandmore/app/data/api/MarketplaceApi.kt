@@ -84,6 +84,12 @@ interface MarketplaceApi {
         @Body counter: CounterOfferRequest
     ): Response<OfferDto>
 
+    @POST("marketplace/offers/{id}/accept-counter/")
+    suspend fun acceptCounterOffer(@Path("id") offerId: Int): Response<AcceptCounterResponse>
+
+    @POST("marketplace/offers/{id}/decline-counter/")
+    suspend fun declineCounterOffer(@Path("id") offerId: Int): Response<StatusResponse>
+
     // Save/Unsave
     @GET("marketplace/listings/{id}/saved/")
     suspend fun isListingSaved(@Path("id") listingId: Int): Response<SavedStatusResponse>

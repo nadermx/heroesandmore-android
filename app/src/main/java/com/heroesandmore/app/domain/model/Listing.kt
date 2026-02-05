@@ -76,15 +76,24 @@ data class Bid(
     val created: String
 )
 
+data class OfferListing(
+    val id: Int,
+    val title: String,
+    val price: String,
+    val imageUrl: String?
+)
+
 data class Offer(
     val id: Int,
-    val listingId: Int,
-    val listingTitle: String,
+    val listing: OfferListing,
     val amount: String,
     val message: String?,
     val buyerUsername: String,
     val status: OfferStatus,
+    val isFromBuyer: Boolean,
     val counterAmount: String?,
+    val counterMessage: String?,
+    val timeRemaining: String?,
     val created: String
 )
 

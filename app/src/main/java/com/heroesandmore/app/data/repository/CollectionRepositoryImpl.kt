@@ -48,12 +48,13 @@ class CollectionRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete collection")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
     override suspend fun getCollectionItems(id: Int, page: Int): Resource<List<CollectionItem>> {
-        val result = safeApiCall { collectionsApi.getCollectionItems(id, page) }
-        return result.map { response -> response.results.map { it.toCollectionItem() } }
+        val result = safeApiCall { collectionsApi.getCollectionItems(id) }
+        return result.map { items -> items.map { it.toCollectionItem() } }
     }
 
     override suspend fun addCollectionItem(collectionId: Int, request: AddCollectionItemRequest): Resource<CollectionItem> {
@@ -72,6 +73,7 @@ class CollectionRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to remove item")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -91,6 +93,7 @@ class CollectionRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(result.data?.string() ?: "")
             is Resource.Error -> Resource.error(result.message ?: "Failed to export collection")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -155,7 +158,7 @@ class CollectionRepositoryImpl @Inject constructor(
         itemCount = itemCount
     )
 
-    private fun CollectionValueHistoryDto.toCollectionValueHistory(): CollectionValueHistory = CollectionValueHistory(
+    private fun CollectionValueSnapshotDto.toCollectionValueHistory(): CollectionValueHistory = CollectionValueHistory(
         date = date,
         totalValue = totalValue,
         itemCount = itemCount

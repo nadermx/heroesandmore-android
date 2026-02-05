@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -133,32 +132,71 @@ fun HeroesNavHost(
         ) {
             // Main tabs
             composable(Screen.Home.route) {
-                HomeScreen(navController = navController)
+                HomeScreen(
+                    onNavigateToSearch = { navController.navigate(Screen.Search.createRoute("")) },
+                    onNavigateToListing = { listingId -> navController.navigate(Screen.ListingDetail.createRoute(listingId)) },
+                    onNavigateToCategory = { slug -> navController.navigate(Screen.Category.createRoute(slug)) }
+                )
             }
 
             composable(Screen.Browse.route) {
-                BrowseScreen(navController = navController)
+                BrowseScreen(
+                    onNavigateToCategory = { slug -> navController.navigate(Screen.Category.createRoute(slug)) },
+                    onNavigateToSearch = { navController.navigate(Screen.Search.createRoute("")) }
+                )
             }
 
             composable(Screen.Sell.route) {
-                CreateListingScreen(navController = navController)
+                CreateListingScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onListingCreated = { listingId -> 
+                        navController.navigate(Screen.ListingDetail.createRoute(listingId)) {
+                            popUpTo(Screen.Home.route)
+                        }
+                    }
+                )
             }
 
             composable(Screen.Collections.route) {
-                CollectionsScreen(navController = navController)
+                CollectionsScreen(
+                    onNavigateToLogin = { navController.navigate(Screen.Login.route) },
+                    onNavigateToCollection = { collectionId -> navController.navigate(Screen.CollectionDetail.createRoute(collectionId)) },
+                    onNavigateToCreateCollection = { /* Show dialog or navigate to create screen */ }
+                )
             }
 
             composable(Screen.Profile.route) {
-                ProfileScreen(navController = navController)
+                ProfileScreen(
+                    onNavigateToLogin = { navController.navigate(Screen.Login.route) },
+                    onNavigateToSettings = { /* Navigate to settings */ },
+                    onNavigateToMyListings = { /* Navigate to my listings */ },
+                    onNavigateToMyOrders = { /* Navigate to my orders */ },
+                    onNavigateToSavedListings = { /* Navigate to saved */ },
+                    onNavigateToMessages = { /* Navigate to messages */ },
+                    onNavigateToNotifications = { /* Navigate to notifications */ },
+                    onNavigateToWishlists = { /* Navigate to wishlists */ },
+                    onNavigateToPriceAlerts = { /* Navigate to price alerts */ }
+                )
             }
 
             // Auth
             composable(Screen.Login.route) {
-                LoginScreen(navController = navController)
+                LoginScreen(
+                    onNavigateToRegister = { navController.navigate(Screen.Register.route) },
+                    onNavigateToForgotPassword = { /* Navigate to forgot password */ },
+                    onLoginSuccess = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Register.route) {
-                RegisterScreen(navController = navController)
+                RegisterScreen(
+                    onNavigateToLogin = { navController.popBackStack() },
+                    onRegisterSuccess = { 
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
             }
 
             // Listing detail
@@ -169,7 +207,9 @@ fun HeroesNavHost(
                 val listingId = backStackEntry.arguments?.getInt("listingId") ?: 0
                 ListingDetailScreen(
                     listingId = listingId,
-                    navController = navController
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSeller = { username -> /* Navigate to seller profile */ },
+                    onNavigateToCheckout = { id -> /* Navigate to checkout */ }
                 )
             }
 
@@ -181,7 +221,7 @@ fun HeroesNavHost(
                 val collectionId = backStackEntry.arguments?.getInt("collectionId") ?: 0
                 CollectionDetailScreen(
                     collectionId = collectionId,
-                    navController = navController
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 
@@ -193,7 +233,8 @@ fun HeroesNavHost(
                 val query = backStackEntry.arguments?.getString("query") ?: ""
                 SearchScreen(
                     initialQuery = query,
-                    navController = navController
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToListing = { listingId -> navController.navigate(Screen.ListingDetail.createRoute(listingId)) }
                 )
             }
 
@@ -204,8 +245,8 @@ fun HeroesNavHost(
             ) { backStackEntry ->
                 val slug = backStackEntry.arguments?.getString("slug") ?: ""
                 BrowseScreen(
-                    categorySlug = slug,
-                    navController = navController
+                    onNavigateToCategory = { categorySlug -> navController.navigate(Screen.Category.createRoute(categorySlug)) },
+                    onNavigateToSearch = { navController.navigate(Screen.Search.createRoute("")) }
                 )
             }
         }

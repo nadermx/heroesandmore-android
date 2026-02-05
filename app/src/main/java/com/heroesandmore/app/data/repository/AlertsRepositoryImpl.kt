@@ -25,6 +25,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to mark as read")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -34,6 +35,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to mark all as read")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -63,6 +65,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete wishlist")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -77,6 +80,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to remove item")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -96,6 +100,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete saved search")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
@@ -125,6 +130,7 @@ class AlertsRepositoryImpl @Inject constructor(
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to delete price alert")
             is Resource.Loading -> Resource.loading()
+            else -> Resource.error("Unknown error")
         }
     }
 
