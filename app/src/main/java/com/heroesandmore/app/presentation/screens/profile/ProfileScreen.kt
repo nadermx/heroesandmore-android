@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToMyListings: () -> Unit,
     onNavigateToMyOrders: () -> Unit,
+    onNavigateToMyOffers: () -> Unit,
     onNavigateToSavedListings: () -> Unit,
     onNavigateToMessages: () -> Unit,
     onNavigateToNotifications: () -> Unit,
@@ -118,6 +120,15 @@ fun ProfileScreen(
                         title = "My Orders",
                         subtitle = "Track your purchases",
                         onClick = onNavigateToMyOrders
+                    )
+                }
+
+                item {
+                    ProfileMenuItem(
+                        icon = Icons.Outlined.LocalOffer,
+                        title = "My Offers",
+                        subtitle = "Offers you've made or received",
+                        onClick = onNavigateToMyOffers
                     )
                 }
 

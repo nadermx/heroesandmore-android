@@ -36,6 +36,7 @@ import com.heroesandmore.app.presentation.screens.home.HomeScreen
 import com.heroesandmore.app.presentation.screens.listing.ListingDetailScreen
 import com.heroesandmore.app.presentation.screens.listing.CreateListingScreen
 import com.heroesandmore.app.presentation.screens.profile.ProfileScreen
+import com.heroesandmore.app.presentation.screens.profile.MyOffersScreen
 import com.heroesandmore.app.presentation.screens.search.SearchScreen
 
 data class BottomNavItem(
@@ -171,11 +172,21 @@ fun HeroesNavHost(
                     onNavigateToSettings = { /* Navigate to settings */ },
                     onNavigateToMyListings = { /* Navigate to my listings */ },
                     onNavigateToMyOrders = { /* Navigate to my orders */ },
+                    onNavigateToMyOffers = { navController.navigate(Screen.MyOffers.route) },
                     onNavigateToSavedListings = { /* Navigate to saved */ },
                     onNavigateToMessages = { /* Navigate to messages */ },
                     onNavigateToNotifications = { /* Navigate to notifications */ },
                     onNavigateToWishlists = { /* Navigate to wishlists */ },
                     onNavigateToPriceAlerts = { /* Navigate to price alerts */ }
+                )
+            }
+
+            // My Offers
+            composable(Screen.MyOffers.route) {
+                MyOffersScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToListing = { listingId -> navController.navigate(Screen.ListingDetail.createRoute(listingId)) },
+                    onNavigateToCheckout = { listingId -> /* Navigate to checkout */ }
                 )
             }
 
