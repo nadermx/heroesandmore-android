@@ -1,5 +1,12 @@
 package com.heroesandmore.app.presentation.screens.listing
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,9 +20,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.heroesandmore.app.domain.model.ListingDetail
@@ -29,6 +42,7 @@ fun ListingDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToSeller: (String) -> Unit,
     onNavigateToCheckout: (Int) -> Unit,
+    onNavigateToSell: () -> Unit = {},
     viewModel: ListingDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,6 +99,7 @@ fun ListingDetailScreen(
                 ListingDetailContent(
                     listing = uiState.listing!!,
                     onSellerClick = { onNavigateToSeller(uiState.listing!!.seller.username) },
+                    onSellYours = onNavigateToSell,
                     modifier = Modifier.padding(padding)
                 )
             }
@@ -108,21 +123,32 @@ fun ListingDetailScreen(
             onSubmit = { amount, message -> viewModel.makeOffer(amount, message) }
         )
     }
+
 }
 
 @Composable
 private fun ListingDetailContent(
     listing: ListingDetail,
     onSellerClick: () -> Unit,
+    onSellYours: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var showFullscreenImage by remember { mutableStateOf(false) }
+    var fullscreenImageIndex by remember { mutableIntStateOf(0) }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 100.dp)
     ) {
         // Image Gallery
         item {
-            ImageGallery(images = listing.images.map { it.url })
+            ImageGallery(
+                images = listing.images.map { it.url },
+                onImageTap = { index ->
+                    fullscreenImageIndex = index
+                    showFullscreenImage = true
+                }
+            )
         }
 
         // Title and Price
@@ -289,6 +315,59 @@ private fun ListingDetailContent(
                 }
             }
         }
+
+        // Sell Yours CTA
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.inverseSurface
+                ),
+                onClick = onSellYours
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Have one like this?",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.inverseOnSurface
+                        )
+                        Text(
+                            text = "List yours on HeroesAndMore and reach thousands of collectors.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "Sell Yours",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.inverseSurface,
+                        modifier = Modifier
+                            .background(
+                                MaterialTheme.colorScheme.inverseOnSurface,
+                                MaterialTheme.shapes.small
+                            )
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+
+    if (showFullscreenImage) {
+        FullscreenImageViewer(
+            images = listing.images.map { it.url },
+            initialPage = fullscreenImageIndex,
+            onDismiss = { showFullscreenImage = false }
+        )
     }
 }
 
@@ -296,6 +375,7 @@ private fun ListingDetailContent(
 @OptIn(ExperimentalFoundationApi::class)
 private fun ImageGallery(
     images: List<String>,
+    onImageTap: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size.coerceAtLeast(1) })
@@ -311,7 +391,9 @@ private fun ImageGallery(
                 AsyncImage(
                     model = images[page],
                     contentDescription = "Image ${page + 1}",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onImageTap(page) },
                     contentScale = ContentScale.Fit
                 )
             }
@@ -545,4 +627,109 @@ private fun OfferDialog(
             }
         }
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FullscreenImageViewer(
+    images: List<String>,
+    initialPage: Int,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            val pagerState = rememberPagerState(
+                initialPage = initialPage,
+                pageCount = { images.size }
+            )
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                var scale by remember { mutableFloatStateOf(1f) }
+                var offset by remember { mutableStateOf(Offset.Zero) }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, pan, zoom, _ ->
+                                scale = (scale * zoom).coerceIn(1f, 5f)
+                                if (scale > 1f) {
+                                    offset = Offset(
+                                        x = offset.x + pan.x,
+                                        y = offset.y + pan.y
+                                    )
+                                } else {
+                                    offset = Offset.Zero
+                                }
+                            }
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    if (scale > 1f) {
+                                        scale = 1f
+                                        offset = Offset.Zero
+                                    } else {
+                                        scale = 2.5f
+                                    }
+                                },
+                                onTap = { onDismiss() }
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = images[page],
+                        contentDescription = "Image ${page + 1}",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale,
+                                translationX = offset.x,
+                                translationY = offset.y
+                            ),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+            }
+
+            // Close button
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            // Page indicator
+            if (images.size > 1) {
+                Text(
+                    text = "${pagerState.currentPage + 1} / ${images.size}",
+                    color = Color.White.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                )
+            }
+        }
+    }
 }

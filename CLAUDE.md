@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with the HeroesAndMore Android app.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -87,7 +87,7 @@ app/src/main/java/com/heroesandmore/app/
 │   │   ├── listing/                # ListingDetailScreen, CreateListingScreen + VMs
 │   │   ├── collections/            # CollectionsScreen, CollectionDetailScreen + VMs
 │   │   ├── search/                 # SearchScreen, SearchViewModel
-│   │   └── profile/                # ProfileScreen, ProfileViewModel
+│   │   └── profile/                # ProfileScreen, MyOffersScreen + ViewModels
 │   ├── components/                 # Reusable composables
 │   │   ├── CommonComponents.kt     # Generic components
 │   │   └── ListingCard.kt          # Listing preview card
@@ -100,7 +100,7 @@ app/src/main/java/com/heroesandmore/app/
 │       └── Theme.kt
 │
 ├── service/
-│   └── HeroesFirebaseMessagingService.kt  # FCM push notifications
+│   └── FirebaseMessagingService.kt   # FCM push notifications
 │
 ├── di/                             # Hilt modules
 │   ├── AppModule.kt                # EncryptedSharedPrefs, TokenManager
@@ -287,6 +287,7 @@ sealed class Screen(val route: String) {
 - `auction_won` - User won auction
 - `offer_received` - New offer on listing
 - `offer_accepted` - Offer was accepted
+- `counter_offer` - Seller made counter-offer
 - `order_shipped` - Order shipped
 - `price_alert` - Price drop alert
 - `wishlist_match` - Item matches wishlist

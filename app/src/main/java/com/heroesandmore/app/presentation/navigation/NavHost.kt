@@ -220,7 +220,8 @@ fun HeroesNavHost(
                     listingId = listingId,
                     onNavigateBack = { navController.popBackStack() },
                     onNavigateToSeller = { username -> /* Navigate to seller profile */ },
-                    onNavigateToCheckout = { id -> /* Navigate to checkout */ }
+                    onNavigateToCheckout = { id -> /* Navigate to checkout */ },
+                    onNavigateToSell = { navController.navigate(Screen.Sell.route) }
                 )
             }
 
