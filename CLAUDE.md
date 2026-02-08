@@ -85,12 +85,15 @@ app/src/main/java/com/heroesandmore/app/
 │   │   ├── home/                   # HomeScreen, HomeViewModel
 │   │   ├── browse/                 # BrowseScreen, BrowseViewModel
 │   │   ├── listing/                # ListingDetailScreen, CreateListingScreen + VMs
+│   │   │                          # ListingDetailScreen includes FullscreenImageViewer
+│   │   │                          # (pinch-to-zoom, double-tap, HorizontalPager)
 │   │   ├── collections/            # CollectionsScreen, CollectionDetailScreen + VMs
 │   │   ├── search/                 # SearchScreen, SearchViewModel
 │   │   └── profile/                # ProfileScreen, MyOffersScreen + ViewModels
 │   ├── components/                 # Reusable composables
 │   │   ├── CommonComponents.kt     # Generic components
 │   │   └── ListingCard.kt          # Listing preview card
+│   │                                # ListingDetailScreen also has SellYoursCTA composable
 │   ├── navigation/
 │   │   ├── Screen.kt               # Sealed class with all routes
 │   │   └── NavHost.kt              # Bottom nav + composable entries
@@ -388,6 +391,21 @@ adb logcat -s HeroesAndMore
 
 # Dependency tree for specific configuration
 ./gradlew app:dependencies --configuration releaseRuntimeClasspath
+```
+
+## Safe API Call Pattern
+
+Repository implementations use a `safeApiCall` helper for consistent error handling:
+```kotlin
+private suspend fun <T> safeApiCall(apiCall: suspend () -> T): Resource<T> {
+    return try {
+        Resource.Success(apiCall())
+    } catch (e: HttpException) {
+        Resource.Error(e.message() ?: "HTTP error")
+    } catch (e: IOException) {
+        Resource.Error("Network error")
+    }
+}
 ```
 
 ## Security
