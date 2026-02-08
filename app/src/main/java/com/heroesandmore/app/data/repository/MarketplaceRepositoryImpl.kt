@@ -185,13 +185,13 @@ class MarketplaceRepositoryImpl @Inject constructor(
         return result.map { it.toReview() }
     }
 
-    override suspend fun checkout(listingId: Int, shippingAddress: ShippingAddressDto): Resource<Order> {
-        val result = safeApiCall { marketplaceApi.checkout(listingId, CheckoutRequest(shippingAddress)) }
+    override suspend fun checkout(listingId: Int, shippingAddress: ShippingAddressDto, quantity: Int): Resource<Order> {
+        val result = safeApiCall { marketplaceApi.checkout(listingId, CheckoutRequest(shippingAddress, quantity)) }
         return result.map { it.toOrder() }
     }
 
-    override suspend fun createPaymentIntent(listingId: Int, offerId: Int?): Resource<PaymentIntentResponse> {
-        return safeApiCall { marketplaceApi.createPaymentIntent(PaymentIntentRequest(listingId, offerId)) }
+    override suspend fun createPaymentIntent(listingId: Int, offerId: Int?, quantity: Int): Resource<PaymentIntentResponse> {
+        return safeApiCall { marketplaceApi.createPaymentIntent(PaymentIntentRequest(listingId, offerId, quantity)) }
     }
 
     override suspend fun confirmPayment(paymentIntentId: String): Resource<Order> {
@@ -249,7 +249,8 @@ class MarketplaceRepositoryImpl @Inject constructor(
         auctionEnd = auctionEnd,
         timeRemaining = timeRemaining,
         views = views,
-        created = created
+        created = created,
+        quantityAvailable = quantityAvailable ?: 1
     )
 
     private fun ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(
@@ -276,7 +277,10 @@ class MarketplaceRepositoryImpl @Inject constructor(
         recentSales = recentSales?.map { RecentSale(it.source, it.price, it.date) } ?: emptyList(),
         views = views,
         status = status,
-        created = created
+        created = created,
+        quantity = quantity ?: 1,
+        quantityAvailable = quantityAvailable ?: 1,
+        quantitySold = quantitySold ?: 0
     )
 
     private fun com.heroesandmore.app.data.dto.accounts.PublicProfileDto.toPublicProfile(): PublicProfile = PublicProfile(
@@ -321,6 +325,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
         listing = listing.toListing(),
         buyerUsername = buyerUsername,
         sellerUsername = sellerUsername,
+        quantity = quantity ?: 1,
         itemPrice = itemPrice,
         shippingPrice = shippingPrice,
         amount = amount,

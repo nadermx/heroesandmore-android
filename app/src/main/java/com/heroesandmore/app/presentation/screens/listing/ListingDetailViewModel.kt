@@ -20,7 +20,8 @@ data class ListingDetailUiState(
     val showBidDialog: Boolean = false,
     val showOfferDialog: Boolean = false,
     val actionError: String? = null,
-    val actionSuccess: String? = null
+    val actionSuccess: String? = null,
+    val selectedQuantity: Int = 1
 )
 
 @HiltViewModel
@@ -150,6 +151,11 @@ class ListingDetailViewModel @Inject constructor(
                 is Resource.Loading -> {}
             }
         }
+    }
+
+    fun updateQuantity(quantity: Int) {
+        val maxAvailable = _uiState.value.listing?.quantityAvailable ?: 1
+        _uiState.update { it.copy(selectedQuantity = quantity.coerceIn(1, maxAvailable)) }
     }
 
     fun clearActionMessages() {

@@ -23,7 +23,9 @@ data class ListingDto(
     @SerializedName("time_remaining")
     val timeRemaining: Int?,
     val views: Int,
-    val created: String
+    val created: String,
+    @SerializedName("quantity_available")
+    val quantityAvailable: Int? = null
 )
 
 data class ListingDetailDto(
@@ -63,7 +65,12 @@ data class ListingDetailDto(
     val recentSales: List<RecentSaleDto>?,
     val views: Int,
     val status: String,
-    val created: String
+    val created: String,
+    val quantity: Int? = null,
+    @SerializedName("quantity_available")
+    val quantityAvailable: Int? = null,
+    @SerializedName("quantity_sold")
+    val quantitySold: Int? = null
 )
 
 data class ListingImageDto(
@@ -87,6 +94,7 @@ data class CreateListingRequest(
     val listingType: String = "fixed",
     val category: Int,
     val condition: String,
+    val quantity: Int = 1,
     @SerializedName("grading_company")
     val gradingCompany: String? = null,
     val grade: String? = null,
@@ -191,6 +199,7 @@ data class OrderDto(
     val trackingCarrier: String?,
     @SerializedName("shipped_at")
     val shippedAt: String?,
+    val quantity: Int? = null,
     @SerializedName("delivered_at")
     val deliveredAt: String?,
     val created: String
@@ -233,14 +242,16 @@ data class CreateReviewRequest(
 
 data class CheckoutRequest(
     @SerializedName("shipping_address")
-    val shippingAddress: ShippingAddressDto
+    val shippingAddress: ShippingAddressDto,
+    val quantity: Int = 1
 )
 
 data class PaymentIntentRequest(
     @SerializedName("listing_id")
     val listingId: Int,
     @SerializedName("offer_id")
-    val offerId: Int? = null
+    val offerId: Int? = null,
+    val quantity: Int = 1
 )
 
 data class PaymentIntentResponse(

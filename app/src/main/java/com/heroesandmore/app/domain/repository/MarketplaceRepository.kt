@@ -53,8 +53,8 @@ interface MarketplaceRepository {
     suspend fun createReview(orderId: Int, rating: Int, text: String?): Resource<Review>
 
     // Checkout
-    suspend fun checkout(listingId: Int, shippingAddress: ShippingAddressDto): Resource<Order>
-    suspend fun createPaymentIntent(listingId: Int, offerId: Int? = null): Resource<PaymentIntentResponse>
+    suspend fun checkout(listingId: Int, shippingAddress: ShippingAddressDto, quantity: Int = 1): Resource<Order>
+    suspend fun createPaymentIntent(listingId: Int, offerId: Int? = null, quantity: Int = 1): Resource<PaymentIntentResponse>
     suspend fun confirmPayment(paymentIntentId: String): Resource<Order>
 
     // Auctions

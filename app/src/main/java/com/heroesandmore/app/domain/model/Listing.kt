@@ -13,7 +13,8 @@ data class Listing(
     val auctionEnd: String?,
     val timeRemaining: Int?,
     val views: Int,
-    val created: String
+    val created: String,
+    val quantityAvailable: Int = 1
 )
 
 data class ListingDetail(
@@ -40,7 +41,10 @@ data class ListingDetail(
     val recentSales: List<RecentSale>,
     val views: Int,
     val status: String,
-    val created: String
+    val created: String,
+    val quantity: Int = 1,
+    val quantityAvailable: Int = 1,
+    val quantitySold: Int = 0
 )
 
 data class ListingImage(
@@ -122,6 +126,7 @@ data class Order(
     val listing: Listing,
     val buyerUsername: String,
     val sellerUsername: String,
+    val quantity: Int = 1,
     val itemPrice: String,
     val shippingPrice: String,
     val amount: String,

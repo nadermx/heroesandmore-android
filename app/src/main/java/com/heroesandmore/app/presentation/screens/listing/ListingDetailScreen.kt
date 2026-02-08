@@ -41,7 +41,7 @@ fun ListingDetailScreen(
     listingId: Int,
     onNavigateBack: () -> Unit,
     onNavigateToSeller: (String) -> Unit,
-    onNavigateToCheckout: (Int) -> Unit,
+    onNavigateToCheckout: (Int, Int) -> Unit,
     onNavigateToSell: () -> Unit = {},
     viewModel: ListingDetailViewModel = hiltViewModel()
 ) {
@@ -77,7 +77,9 @@ fun ListingDetailScreen(
             uiState.listing?.let { listing ->
                 ListingBottomBar(
                     listing = listing,
-                    onBuyNow = { onNavigateToCheckout(listing.id) },
+                    selectedQuantity = uiState.selectedQuantity,
+                    onQuantityChange = { viewModel.updateQuantity(it) },
+                    onBuyNow = { onNavigateToCheckout(listing.id, uiState.selectedQuantity) },
                     onPlaceBid = { viewModel.showBidDialog() },
                     onMakeOffer = { viewModel.showOfferDialog() }
                 )
@@ -187,12 +189,21 @@ private fun ListingDetailContent(
                             )
                         }
                     } else {
-                        Text(
-                            text = "$${listing.price}",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Column {
+                            Text(
+                                text = "$${listing.price}",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            if (listing.quantityAvailable > 1) {
+                                Text(
+                                    text = "${listing.quantityAvailable} available",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -501,6 +512,8 @@ private fun SellerCard(
 @Composable
 private fun ListingBottomBar(
     listing: ListingDetail,
+    selectedQuantity: Int = 1,
+    onQuantityChange: (Int) -> Unit = {},
     onBuyNow: () -> Unit,
     onPlaceBid: () -> Unit,
     onMakeOffer: () -> Unit
@@ -508,33 +521,87 @@ private fun ListingBottomBar(
     Surface(
         shadowElevation = 8.dp
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(16.dp)
         ) {
-            if (listing.listingType == ListingType.AUCTION) {
-                Button(
-                    onClick = onPlaceBid,
-                    modifier = Modifier.weight(1f)
+            // Quantity selector for multi-quantity fixed-price listings
+            if (listing.listingType == ListingType.FIXED && listing.quantityAvailable > 1) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Place Bid")
-                }
-            } else {
-                if (listing.allowOffers) {
-                    OutlinedButton(
-                        onClick = onMakeOffer,
-                        modifier = Modifier.weight(1f)
+                    Text(
+                        text = "Quantity",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("Make Offer")
+                        IconButton(
+                            onClick = { onQuantityChange(selectedQuantity - 1) },
+                            enabled = selectedQuantity > 1,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                        }
+                        Text(
+                            text = "$selectedQuantity",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        IconButton(
+                            onClick = { onQuantityChange(selectedQuantity + 1) },
+                            enabled = selectedQuantity < listing.quantityAvailable,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Increase")
+                        }
                     }
                 }
-                Button(
-                    onClick = onBuyNow,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Buy Now")
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (listing.listingType == ListingType.AUCTION) {
+                    Button(
+                        onClick = onPlaceBid,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Place Bid")
+                    }
+                } else {
+                    if (listing.quantityAvailable == 0) {
+                        Button(
+                            onClick = {},
+                            modifier = Modifier.weight(1f),
+                            enabled = false
+                        ) {
+                            Text("Sold Out")
+                        }
+                    } else {
+                        if (listing.allowOffers) {
+                            OutlinedButton(
+                                onClick = onMakeOffer,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Make Offer")
+                            }
+                        }
+                        Button(
+                            onClick = onBuyNow,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(if (selectedQuantity > 1) "Buy $selectedQuantity" else "Buy Now")
+                        }
+                    }
                 }
             }
         }
