@@ -14,7 +14,8 @@ data class Listing(
     val timeRemaining: Int?,
     val views: Int,
     val created: String,
-    val quantityAvailable: Int = 1
+    val quantityAvailable: Int = 1,
+    val isPlatformListing: Boolean = false
 )
 
 data class ListingDetail(
@@ -44,7 +45,8 @@ data class ListingDetail(
     val created: String,
     val quantity: Int = 1,
     val quantityAvailable: Int = 1,
-    val quantitySold: Int = 0
+    val quantitySold: Int = 0,
+    val isPlatformListing: Boolean = false
 )
 
 data class ListingImage(

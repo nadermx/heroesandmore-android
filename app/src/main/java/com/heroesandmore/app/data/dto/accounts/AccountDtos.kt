@@ -14,6 +14,8 @@ data class ProfileDto(
     val website: String?,
     @SerializedName("is_seller_verified")
     val isSellerVerified: Boolean,
+    @SerializedName("is_trusted_seller")
+    val isTrustedSeller: Boolean = false,
     val rating: Double?,
     @SerializedName("stripe_account_complete")
     val stripeAccountComplete: Boolean?,
@@ -30,6 +32,8 @@ data class PublicProfileDto(
     val rating: Double?,
     @SerializedName("is_seller_verified")
     val isSellerVerified: Boolean,
+    @SerializedName("is_trusted_seller")
+    val isTrustedSeller: Boolean = false,
     @SerializedName("listings_count")
     val listingsCount: Int,
     val created: String

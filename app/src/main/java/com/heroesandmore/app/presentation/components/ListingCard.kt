@@ -44,6 +44,18 @@ fun ListingCard(
                     contentScale = ContentScale.Crop
                 )
 
+                // Badges row
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    if (listing.isPlatformListing) {
+                        OfficialBadge()
+                    }
+                }
+
                 if (listing.listingType == ListingType.AUCTION) {
                     AuctionBadge(
                         timeRemaining = listing.timeRemaining,

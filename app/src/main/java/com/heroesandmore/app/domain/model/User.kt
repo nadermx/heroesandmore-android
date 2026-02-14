@@ -9,6 +9,7 @@ data class User(
     val location: String?,
     val website: String?,
     val isSellerVerified: Boolean,
+    val isTrustedSeller: Boolean = false,
     val rating: Double?,
     val stripeAccountComplete: Boolean,
     val created: String
@@ -21,6 +22,7 @@ data class PublicProfile(
     val location: String?,
     val rating: Double?,
     val isSellerVerified: Boolean,
+    val isTrustedSeller: Boolean = false,
     val listingsCount: Int,
     val created: String
 )

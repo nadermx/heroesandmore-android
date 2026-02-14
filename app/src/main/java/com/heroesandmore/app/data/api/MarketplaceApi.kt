@@ -160,6 +160,20 @@ interface MarketplaceApi {
     @GET("marketplace/auctions/ending-soon/")
     suspend fun getEndingSoon(): Response<List<ListingDto>>
 
+    // Platform auctions
+    @GET("marketplace/auctions/platform/")
+    suspend fun getPlatformAuctionEvents(): Response<List<AuctionEventDto>>
+
+    // Lot submissions
+    @POST("marketplace/auctions/platform/{slug}/submit/")
+    suspend fun submitAuctionLot(
+        @Path("slug") eventSlug: String,
+        @Body request: SubmitLotRequest
+    ): Response<AuctionLotSubmissionDto>
+
+    @GET("marketplace/auctions/submissions/")
+    suspend fun getMySubmissions(): Response<List<AuctionLotSubmissionDto>>
+
     // Auto-bid
     @POST("marketplace/listings/{id}/autobid/")
     suspend fun setAutoBid(

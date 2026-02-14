@@ -99,7 +99,8 @@ fun ProfileScreen(
                         username = uiState.user?.username ?: "",
                         avatarUrl = uiState.user?.avatarUrl,
                         rating = uiState.user?.rating,
-                        isVerified = uiState.user?.isSellerVerified ?: false
+                        isVerified = uiState.user?.isSellerVerified ?: false,
+                        isTrustedSeller = uiState.user?.isTrustedSeller ?: false
                     )
                 }
 
@@ -214,7 +215,8 @@ private fun ProfileHeader(
     username: String,
     avatarUrl: String?,
     rating: Double?,
-    isVerified: Boolean
+    isVerified: Boolean,
+    isTrustedSeller: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -247,7 +249,11 @@ private fun ProfileHeader(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-        }
+            if (isTrustedSeller) {
+                Spacer(modifier = Modifier.width(4.dp))
+                TrustedSellerBadge()
+            }
+}
 
         if (rating != null) {
             Row(

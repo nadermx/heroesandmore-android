@@ -158,6 +158,7 @@ class AuthRepositoryImpl @Inject constructor(
             location = location,
             website = website,
             isSellerVerified = isSellerVerified,
+            isTrustedSeller = isTrustedSeller,
             rating = rating,
             stripeAccountComplete = stripeAccountComplete ?: false,
             created = created

@@ -235,6 +235,18 @@ class MarketplaceRepositoryImpl @Inject constructor(
         return result.map { listings -> listings.map { it.toListing() } }
     }
 
+    override suspend fun getPlatformAuctionEvents(): Resource<List<AuctionEventDto>> {
+        return safeApiCall { marketplaceApi.getPlatformAuctionEvents() }
+    }
+
+    override suspend fun submitAuctionLot(eventSlug: String, listingId: Int): Resource<AuctionLotSubmissionDto> {
+        return safeApiCall { marketplaceApi.submitAuctionLot(eventSlug, SubmitLotRequest(listingId)) }
+    }
+
+    override suspend fun getMySubmissions(): Resource<List<AuctionLotSubmissionDto>> {
+        return safeApiCall { marketplaceApi.getMySubmissions() }
+    }
+
     // Mapping functions
     private fun ListingDto.toListing(): Listing = Listing(
         id = id,
@@ -250,7 +262,8 @@ class MarketplaceRepositoryImpl @Inject constructor(
         timeRemaining = timeRemaining,
         views = views,
         created = created,
-        quantityAvailable = quantityAvailable ?: 1
+        quantityAvailable = quantityAvailable ?: 1,
+        isPlatformListing = isPlatformListing
     )
 
     private fun ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(
@@ -280,7 +293,8 @@ class MarketplaceRepositoryImpl @Inject constructor(
         created = created,
         quantity = quantity ?: 1,
         quantityAvailable = quantityAvailable ?: 1,
-        quantitySold = quantitySold ?: 0
+        quantitySold = quantitySold ?: 0,
+        isPlatformListing = isPlatformListing
     )
 
     private fun com.heroesandmore.app.data.dto.accounts.PublicProfileDto.toPublicProfile(): PublicProfile = PublicProfile(
@@ -290,6 +304,7 @@ class MarketplaceRepositoryImpl @Inject constructor(
         location = location,
         rating = rating,
         isSellerVerified = isSellerVerified,
+        isTrustedSeller = isTrustedSeller,
         listingsCount = listingsCount,
         created = created
     )

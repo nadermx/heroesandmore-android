@@ -103,6 +103,13 @@ sealed class Screen(val route: String) {
     object AuctionEvent : Screen("auction/{slug}") {
         fun createRoute(slug: String) = "auction/$slug"
     }
+    object PlatformAuctions : Screen("platform_auctions")
+    object PlatformAuctionDetail : Screen("platform_auction/{slug}") {
+        fun createRoute(slug: String) = "platform_auction/$slug"
+    }
+    object SubmitLot : Screen("submit_lot/{slug}") {
+        fun createRoute(slug: String) = "submit_lot/$slug"
+    }
 
     // Forums
     object Forums : Screen("forums")

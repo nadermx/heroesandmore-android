@@ -25,7 +25,9 @@ data class ListingDto(
     val views: Int,
     val created: String,
     @SerializedName("quantity_available")
-    val quantityAvailable: Int? = null
+    val quantityAvailable: Int? = null,
+    @SerializedName("is_platform_listing")
+    val isPlatformListing: Boolean = false
 )
 
 data class ListingDetailDto(
@@ -70,7 +72,9 @@ data class ListingDetailDto(
     @SerializedName("quantity_available")
     val quantityAvailable: Int? = null,
     @SerializedName("quantity_sold")
-    val quantitySold: Int? = null
+    val quantitySold: Int? = null,
+    @SerializedName("is_platform_listing")
+    val isPlatformListing: Boolean = false
 )
 
 data class ListingImageDto(
@@ -280,7 +284,41 @@ data class AuctionEventDto(
     @SerializedName("is_live")
     val isLive: Boolean,
     val status: String,
-    val created: String
+    val created: String,
+    val slug: String? = null,
+    @SerializedName("is_platform_event")
+    val isPlatformEvent: Boolean = false,
+    val cadence: String? = null,
+    @SerializedName("accepting_submissions")
+    val acceptingSubmissions: Boolean = false,
+    @SerializedName("submission_deadline")
+    val submissionDeadline: String? = null
+)
+
+data class AuctionLotSubmissionDto(
+    val id: Int,
+    @SerializedName("listing_id")
+    val listingId: Int,
+    @SerializedName("listing_title")
+    val listingTitle: String,
+    @SerializedName("listing_image")
+    val listingImage: String?,
+    @SerializedName("event_name")
+    val eventName: String,
+    @SerializedName("event_slug")
+    val eventSlug: String,
+    val status: String,
+    @SerializedName("staff_notes")
+    val staffNotes: String?,
+    @SerializedName("submitted_at")
+    val submittedAt: String,
+    @SerializedName("reviewed_at")
+    val reviewedAt: String?
+)
+
+data class SubmitLotRequest(
+    @SerializedName("listing_id")
+    val listingId: Int
 )
 
 data class AutoBidDto(

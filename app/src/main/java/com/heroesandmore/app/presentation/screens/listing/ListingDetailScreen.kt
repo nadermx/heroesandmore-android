@@ -482,6 +482,10 @@ private fun SellerCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
+                    if (seller.isTrustedSeller) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        TrustedSellerBadge()
+                    }
                 }
                 seller.rating?.let { rating ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
