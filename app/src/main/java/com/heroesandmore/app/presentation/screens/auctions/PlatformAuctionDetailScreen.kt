@@ -14,6 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.heroesandmore.app.presentation.theme.BrandCrimson
+import com.heroesandmore.app.presentation.theme.BrandGold
+import com.heroesandmore.app.presentation.theme.BrandMint
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -156,8 +159,8 @@ private fun EventHeader(event: AuctionEvent?) {
         ) {
             // Status chip
             val (statusColor, statusLabel) = when (event.status.lowercase()) {
-                "live" -> Color(0xFFE53935) to "Live"
-                "preview" -> Color(0xFFFFA000) to "Preview"
+                "live" -> BrandCrimson to "Live"
+                "preview" -> BrandGold to "Preview"
                 "ended" -> MaterialTheme.colorScheme.onSurfaceVariant to "Ended"
                 else -> MaterialTheme.colorScheme.outline to event.status.replaceFirstChar { it.uppercase() }
             }
@@ -178,7 +181,7 @@ private fun EventHeader(event: AuctionEvent?) {
             if (event.isLive) {
                 Surface(
                     shape = RoundedCornerShape(4.dp),
-                    color = Color(0xFFE53935)
+                    color = BrandCrimson
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -204,7 +207,7 @@ private fun EventHeader(event: AuctionEvent?) {
             if (event.acceptingSubmissions) {
                 Surface(
                     shape = RoundedCornerShape(4.dp),
-                    color = Color(0xFF4CAF50)
+                    color = BrandMint
                 ) {
                     Text(
                         text = "Accepting Submissions",
@@ -262,13 +265,13 @@ private fun EventHeader(event: AuctionEvent?) {
                     Icons.Default.Timer,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
-                    tint = Color(0xFFFFA000)
+                    tint = BrandGold
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Submission deadline: ${event.submissionDeadline}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFFFA000)
+                    color = BrandGold
                 )
             }
         }
@@ -343,9 +346,9 @@ private fun MySubmissionsSection(submissions: List<AuctionLotSubmission>) {
 @Composable
 private fun SubmissionStatusBadge(status: String) {
     val (color, label) = when (status.lowercase()) {
-        "pending" -> Color(0xFFFFA000) to "Pending"
-        "approved" -> Color(0xFF4CAF50) to "Approved"
-        "rejected" -> Color(0xFFE53935) to "Rejected"
+        "pending" -> BrandGold to "Pending"
+        "approved" -> BrandMint to "Approved"
+        "rejected" -> BrandCrimson to "Rejected"
         "withdrawn" -> MaterialTheme.colorScheme.onSurfaceVariant to "Withdrawn"
         else -> MaterialTheme.colorScheme.outline to status.replaceFirstChar { it.uppercase() }
     }

@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.heroesandmore.app.presentation.theme.BrandGold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -269,7 +270,7 @@ fun TrustedSellerBadge(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(4.dp),
-        color = Color(0xFFD4A017)
+        color = BrandGold
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),

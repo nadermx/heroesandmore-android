@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.heroesandmore.app.presentation.theme.BrandCrimson
+import com.heroesandmore.app.presentation.theme.BrandGold
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -151,8 +153,8 @@ fun AuctionBadge(
 ) {
     val (text, color) = when {
         timeRemaining == null -> "Auction" to MaterialTheme.colorScheme.secondary
-        timeRemaining <= 3600 -> formatTimeRemaining(timeRemaining) to Color(0xFFE53935)
-        timeRemaining <= 86400 -> formatTimeRemaining(timeRemaining) to Color(0xFFFFA000)
+        timeRemaining <= 3600 -> formatTimeRemaining(timeRemaining) to BrandCrimson
+        timeRemaining <= 86400 -> formatTimeRemaining(timeRemaining) to BrandGold
         else -> formatTimeRemaining(timeRemaining) to MaterialTheme.colorScheme.secondary
     }
 

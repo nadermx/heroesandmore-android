@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.heroesandmore.app.presentation.theme.BrandMint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -201,7 +202,7 @@ private fun AlreadySetUpContent(
             Icons.Default.CheckCircle,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
-            tint = Color(0xFF4CAF50)
+            tint = BrandMint
         )
 
         Spacer(modifier = Modifier.height(24.dp))

@@ -41,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDarkTheme,
     onPrimary = OnPrimary,
-    primaryContainer = PrimaryDark,
+    primaryContainer = BrandCrimson,
     onPrimaryContainer = OnPrimary,
     secondary = Secondary,
     onSecondary = OnSecondary,
@@ -80,7 +80,7 @@ fun HeroesAndMoreTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = BrandNavy.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
