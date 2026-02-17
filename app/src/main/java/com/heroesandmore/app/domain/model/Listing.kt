@@ -16,7 +16,9 @@ data class Listing(
     val created: String,
     val quantityAvailable: Int = 1,
     val isPlatformListing: Boolean = false,
-    val sellerIsTrusted: Boolean = false
+    val sellerIsTrusted: Boolean = false,
+    val saveCount: Int = 0,
+    val recentBids: Int = 0
 )
 
 data class ListingDetail(
@@ -47,7 +49,13 @@ data class ListingDetail(
     val quantity: Int = 1,
     val quantityAvailable: Int = 1,
     val quantitySold: Int = 0,
-    val isPlatformListing: Boolean = false
+    val isPlatformListing: Boolean = false,
+    val watcherCount: Int = 0,
+    val recentBidCount: Int = 0,
+    val bidWarActive: Boolean = false,
+    val compsRange: CompsRange? = null,
+    val bidHistory: List<BidHistoryItem> = emptyList(),
+    val sellerIsTrusted: Boolean = false
 )
 
 data class ListingImage(
@@ -60,6 +68,17 @@ data class RecentSale(
     val source: String,
     val price: String,
     val date: String
+)
+
+data class CompsRange(
+    val low: String,
+    val high: String
+)
+
+data class BidHistoryItem(
+    val bidder: String,
+    val amount: String,
+    val created: String
 )
 
 enum class ListingType {

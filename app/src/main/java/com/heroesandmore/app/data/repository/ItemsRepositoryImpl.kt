@@ -97,6 +97,8 @@ class ItemsRepositoryImpl @Inject constructor(
         timeRemaining = timeRemaining,
         views = views,
         created = created,
-        sellerIsTrusted = sellerIsTrusted
+        sellerIsTrusted = sellerIsTrusted,
+        saveCount = saveCount,
+        recentBids = recentBids
     )
 }

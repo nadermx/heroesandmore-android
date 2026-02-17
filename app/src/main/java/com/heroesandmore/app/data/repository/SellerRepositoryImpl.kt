@@ -205,7 +205,9 @@ class SellerRepositoryImpl @Inject constructor(
         timeRemaining = timeRemaining,
         views = views,
         created = created,
-        sellerIsTrusted = sellerIsTrusted
+        sellerIsTrusted = sellerIsTrusted,
+        saveCount = saveCount,
+        recentBids = recentBids
     )
 
     private fun com.heroesandmore.app.data.dto.marketplace.ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(
@@ -232,7 +234,13 @@ class SellerRepositoryImpl @Inject constructor(
         recentSales = recentSales?.map { RecentSale(it.source, it.price, it.date) } ?: emptyList(),
         views = views,
         status = status,
-        created = created
+        created = created,
+        watcherCount = watcherCount,
+        recentBidCount = recentBidCount,
+        bidWarActive = bidWarActive,
+        compsRange = compsRange?.let { CompsRange(it.low, it.high) },
+        bidHistory = bidHistory.map { BidHistoryItem(it.bidder, it.amount, it.created) },
+        sellerIsTrusted = sellerIsTrusted
     )
 
     private fun com.heroesandmore.app.data.dto.accounts.PublicProfileDto.toPublicProfile(): PublicProfile = PublicProfile(

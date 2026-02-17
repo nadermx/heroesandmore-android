@@ -282,7 +282,9 @@ class MarketplaceRepositoryImpl @Inject constructor(
         created = created,
         quantityAvailable = quantityAvailable ?: 1,
         isPlatformListing = isPlatformListing,
-        sellerIsTrusted = sellerIsTrusted
+        sellerIsTrusted = sellerIsTrusted,
+        saveCount = saveCount,
+        recentBids = recentBids
     )
 
     private fun ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(
@@ -313,7 +315,13 @@ class MarketplaceRepositoryImpl @Inject constructor(
         quantity = quantity ?: 1,
         quantityAvailable = quantityAvailable ?: 1,
         quantitySold = quantitySold ?: 0,
-        isPlatformListing = isPlatformListing
+        isPlatformListing = isPlatformListing,
+        watcherCount = watcherCount,
+        recentBidCount = recentBidCount,
+        bidWarActive = bidWarActive,
+        compsRange = compsRange?.let { CompsRange(it.low, it.high) },
+        bidHistory = bidHistory.map { BidHistoryItem(it.bidder, it.amount, it.created) },
+        sellerIsTrusted = sellerIsTrusted
     )
 
     private fun com.heroesandmore.app.data.dto.accounts.PublicProfileDto.toPublicProfile(): PublicProfile = PublicProfile(

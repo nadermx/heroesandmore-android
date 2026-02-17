@@ -29,7 +29,11 @@ data class ListingDto(
     @SerializedName("is_platform_listing")
     val isPlatformListing: Boolean = false,
     @SerializedName("seller_is_trusted")
-    val sellerIsTrusted: Boolean = false
+    val sellerIsTrusted: Boolean = false,
+    @SerializedName("save_count")
+    val saveCount: Int = 0,
+    @SerializedName("recent_bids")
+    val recentBids: Int = 0
 )
 
 data class ListingDetailDto(
@@ -76,7 +80,30 @@ data class ListingDetailDto(
     @SerializedName("quantity_sold")
     val quantitySold: Int? = null,
     @SerializedName("is_platform_listing")
-    val isPlatformListing: Boolean = false
+    val isPlatformListing: Boolean = false,
+    @SerializedName("watcher_count")
+    val watcherCount: Int = 0,
+    @SerializedName("recent_bid_count")
+    val recentBidCount: Int = 0,
+    @SerializedName("bid_war_active")
+    val bidWarActive: Boolean = false,
+    @SerializedName("comps_range")
+    val compsRange: CompsRangeDto? = null,
+    @SerializedName("bid_history")
+    val bidHistory: List<BidHistoryDto> = emptyList(),
+    @SerializedName("seller_is_trusted")
+    val sellerIsTrusted: Boolean = false
+)
+
+data class CompsRangeDto(
+    val low: String,
+    val high: String
+)
+
+data class BidHistoryDto(
+    val bidder: String,
+    val amount: String,
+    val created: String
 )
 
 data class ListingImageDto(

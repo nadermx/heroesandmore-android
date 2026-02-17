@@ -152,7 +152,9 @@ class AccountRepositoryImpl @Inject constructor(
         timeRemaining = timeRemaining,
         views = views,
         created = created,
-        sellerIsTrusted = sellerIsTrusted
+        sellerIsTrusted = sellerIsTrusted,
+        saveCount = saveCount,
+        recentBids = recentBids
     )
 
     private fun com.heroesandmore.app.data.dto.collections.CollectionDto.toCollection(): com.heroesandmore.app.domain.model.Collection = 

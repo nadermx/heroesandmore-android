@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -34,6 +35,8 @@ import coil.compose.AsyncImage
 import com.heroesandmore.app.domain.model.ListingDetail
 import com.heroesandmore.app.domain.model.ListingType
 import com.heroesandmore.app.presentation.components.*
+import com.heroesandmore.app.presentation.theme.BrandCrimson
+import com.heroesandmore.app.presentation.theme.BrandGold
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -81,7 +84,12 @@ fun ListingDetailScreen(
                     onQuantityChange = { viewModel.updateQuantity(it) },
                     onBuyNow = { onNavigateToCheckout(listing.id, uiState.selectedQuantity) },
                     onPlaceBid = { viewModel.showBidDialog() },
-                    onMakeOffer = { viewModel.showOfferDialog() }
+                    onMakeOffer = { viewModel.showOfferDialog() },
+                    onQuickBid = { increment ->
+                        val currentPrice = listing.currentPrice.toBigDecimalOrNull() ?: java.math.BigDecimal.ZERO
+                        val bidAmount = currentPrice.add(java.math.BigDecimal(increment))
+                        viewModel.placeBid(bidAmount.toPlainString())
+                    }
                 )
             }
         }
@@ -219,6 +227,42 @@ private fun ListingDetailContent(
                         }
                     }
                 }
+
+                // Social proof badges for auctions
+                if (listing.listingType == ListingType.AUCTION) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (listing.watcherCount > 0) {
+                            Surface(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+                                Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("${listing.watcherCount} watching", style = MaterialTheme.typography.labelSmall)
+                                }
+                            }
+                        }
+                        if (listing.recentBidCount > 0) {
+                            Surface(shape = RoundedCornerShape(4.dp), color = BrandCrimson.copy(alpha = 0.1f)) {
+                                Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Bolt, contentDescription = null, modifier = Modifier.size(14.dp), tint = BrandCrimson)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("${listing.recentBidCount} bid${if (listing.recentBidCount != 1) "s" else ""} in last minute", style = MaterialTheme.typography.labelSmall, color = BrandCrimson)
+                                }
+                            }
+                        }
+                        if (listing.bidWarActive) {
+                            Surface(shape = RoundedCornerShape(4.dp), color = BrandCrimson) {
+                                Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.LocalFireDepartment, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.White)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Bid war active", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = Color.White)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -286,6 +330,18 @@ private fun ListingDetailContent(
             }
         }
 
+        // Comps Range
+        if (listing.compsRange != null) {
+            item {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    Text("Recent Comps: ", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                    Text("$${listing.compsRange.low} – $${listing.compsRange.high}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        }
+
         // Recent Sales
         if (listing.recentSales.isNotEmpty()) {
             item {
@@ -323,6 +379,51 @@ private fun ListingDetailContent(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+        }
+
+        // Bid History
+        if (listing.bidHistory.isNotEmpty()) {
+            item {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Bid History", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    listing.bidHistory.forEachIndexed { index, bid ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (index == 0) {
+                                    Icon(
+                                        Icons.Default.EmojiEvents,
+                                        contentDescription = "Highest",
+                                        modifier = Modifier.size(16.dp),
+                                        tint = BrandGold
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
+                                Text(
+                                    bid.bidder,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (index == 0) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (index == 0) BrandCrimson else MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            Text(
+                                "$${bid.amount}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        if (index < listing.bidHistory.lastIndex) {
+                            HorizontalDivider()
+                        }
+                    }
                 }
             }
         }
@@ -520,7 +621,8 @@ private fun ListingBottomBar(
     onQuantityChange: (Int) -> Unit = {},
     onBuyNow: () -> Unit,
     onPlaceBid: () -> Unit,
-    onMakeOffer: () -> Unit
+    onMakeOffer: () -> Unit,
+    onQuickBid: (Int) -> Unit = {}
 ) {
     Surface(
         shadowElevation = 8.dp
@@ -530,6 +632,26 @@ private fun ListingBottomBar(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            // Quick bid buttons for auctions
+            if (listing.listingType == ListingType.AUCTION) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                ) {
+                    listOf(10, 25, 50).forEach { increment ->
+                        OutlinedButton(
+                            onClick = { onQuickBid(increment) },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("+$$increment", fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+
             // Quantity selector for multi-quantity fixed-price listings
             if (listing.listingType == ListingType.FIXED && listing.quantityAvailable > 1) {
                 Row(
@@ -626,7 +748,25 @@ private fun BidDialog(
         text = {
             Column {
                 Text("Current bid: $$currentPrice")
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+                // Quick bid buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    listOf(10, 25, 50).forEach { increment ->
+                        val price = currentPrice.toBigDecimalOrNull() ?: java.math.BigDecimal.ZERO
+                        val quickAmount = price.add(java.math.BigDecimal(increment))
+                        OutlinedButton(
+                            onClick = { bidAmount = quickAmount.toPlainString() },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("+$$increment", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = bidAmount,
                     onValueChange = { bidAmount = it },

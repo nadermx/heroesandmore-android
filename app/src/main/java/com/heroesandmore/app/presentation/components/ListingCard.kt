@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -65,6 +67,36 @@ fun ListingCard(
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
                     )
+                }
+
+                // HOT LOT badge
+                if (listing.recentBids >= 5 || listing.saveCount >= 10) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        color = BrandCrimson
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.LocalFireDepartment,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "HOT LOT",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
 
