@@ -15,7 +15,8 @@ data class Listing(
     val views: Int,
     val created: String,
     val quantityAvailable: Int = 1,
-    val isPlatformListing: Boolean = false
+    val isPlatformListing: Boolean = false,
+    val sellerIsTrusted: Boolean = false
 )
 
 data class ListingDetail(

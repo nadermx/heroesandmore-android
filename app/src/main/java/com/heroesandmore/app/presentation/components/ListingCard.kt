@@ -103,6 +103,19 @@ fun ListingCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+
+                if (listing.sellerIsTrusted) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = listing.sellerUsername,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        TrustedSellerBadge()
+                    }
+                }
             }
         }
     }

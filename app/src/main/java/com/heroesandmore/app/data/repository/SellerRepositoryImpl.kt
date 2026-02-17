@@ -204,7 +204,8 @@ class SellerRepositoryImpl @Inject constructor(
         auctionEnd = auctionEnd,
         timeRemaining = timeRemaining,
         views = views,
-        created = created
+        created = created,
+        sellerIsTrusted = sellerIsTrusted
     )
 
     private fun com.heroesandmore.app.data.dto.marketplace.ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(

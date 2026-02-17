@@ -151,7 +151,8 @@ class AccountRepositoryImpl @Inject constructor(
         auctionEnd = auctionEnd,
         timeRemaining = timeRemaining,
         views = views,
-        created = created
+        created = created,
+        sellerIsTrusted = sellerIsTrusted
     )
 
     private fun com.heroesandmore.app.data.dto.collections.CollectionDto.toCollection(): com.heroesandmore.app.domain.model.Collection = 

@@ -29,6 +29,8 @@ fun ProfileScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToWishlists: () -> Unit,
     onNavigateToPriceAlerts: () -> Unit,
+    onNavigateToSellerSetup: () -> Unit = {},
+    onNavigateToPlatformAuctions: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -185,6 +187,31 @@ fun ProfileScreen(
                         title = "Price Alerts",
                         subtitle = "Get notified on price changes",
                         onClick = onNavigateToPriceAlerts
+                    )
+                }
+
+                item {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                }
+
+                // Seller section
+                if (uiState.user?.stripeAccountComplete == false) {
+                    item {
+                        ProfileMenuItem(
+                            icon = Icons.Default.Storefront,
+                            title = "Set Up Payments",
+                            subtitle = "Start selling on Heroes & More",
+                            onClick = onNavigateToSellerSetup
+                        )
+                    }
+                }
+
+                item {
+                    ProfileMenuItem(
+                        icon = Icons.Default.Gavel,
+                        title = "Platform Auctions",
+                        subtitle = "Browse official auction events",
+                        onClick = onNavigateToPlatformAuctions
                     )
                 }
 

@@ -29,6 +29,9 @@ import androidx.navigation.navArgument
 import com.heroesandmore.app.R
 import com.heroesandmore.app.presentation.screens.auth.LoginScreen
 import com.heroesandmore.app.presentation.screens.auth.RegisterScreen
+import com.heroesandmore.app.presentation.screens.auctions.PlatformAuctionsScreen
+import com.heroesandmore.app.presentation.screens.auctions.PlatformAuctionDetailScreen
+import com.heroesandmore.app.presentation.screens.auctions.SubmitLotScreen
 import com.heroesandmore.app.presentation.screens.browse.BrowseScreen
 import com.heroesandmore.app.presentation.screens.collections.CollectionsScreen
 import com.heroesandmore.app.presentation.screens.collections.CollectionDetailScreen
@@ -38,6 +41,7 @@ import com.heroesandmore.app.presentation.screens.listing.CreateListingScreen
 import com.heroesandmore.app.presentation.screens.profile.ProfileScreen
 import com.heroesandmore.app.presentation.screens.profile.MyOffersScreen
 import com.heroesandmore.app.presentation.screens.search.SearchScreen
+import com.heroesandmore.app.presentation.screens.seller.SellerSetupScreen
 
 data class BottomNavItem(
     val route: String,
@@ -177,7 +181,9 @@ fun HeroesNavHost(
                     onNavigateToMessages = { /* Navigate to messages */ },
                     onNavigateToNotifications = { /* Navigate to notifications */ },
                     onNavigateToWishlists = { /* Navigate to wishlists */ },
-                    onNavigateToPriceAlerts = { /* Navigate to price alerts */ }
+                    onNavigateToPriceAlerts = { /* Navigate to price alerts */ },
+                    onNavigateToSellerSetup = { navController.navigate(Screen.SellerSetup.route) },
+                    onNavigateToPlatformAuctions = { navController.navigate(Screen.PlatformAuctions.route) }
                 )
             }
 
@@ -259,6 +265,51 @@ fun HeroesNavHost(
                 BrowseScreen(
                     onNavigateToCategory = { categorySlug -> navController.navigate(Screen.Category.createRoute(categorySlug)) },
                     onNavigateToSearch = { navController.navigate(Screen.Search.createRoute("")) }
+                )
+            }
+
+            // Platform Auctions
+            composable(Screen.PlatformAuctions.route) {
+                PlatformAuctionsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToEvent = { slug ->
+                        navController.navigate(Screen.PlatformAuctionDetail.createRoute(slug))
+                    }
+                )
+            }
+
+            composable(
+                route = Screen.PlatformAuctionDetail.route,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val slug = backStackEntry.arguments?.getString("slug") ?: ""
+                PlatformAuctionDetailScreen(
+                    slug = slug,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToListing = { listingId ->
+                        navController.navigate(Screen.ListingDetail.createRoute(listingId))
+                    },
+                    onNavigateToSubmitLot = { eventSlug ->
+                        navController.navigate(Screen.SubmitLot.createRoute(eventSlug))
+                    }
+                )
+            }
+
+            composable(
+                route = Screen.SubmitLot.route,
+                arguments = listOf(navArgument("slug") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val slug = backStackEntry.arguments?.getString("slug") ?: ""
+                SubmitLotScreen(
+                    slug = slug,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Seller Setup
+            composable(Screen.SellerSetup.route) {
+                SellerSetupScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

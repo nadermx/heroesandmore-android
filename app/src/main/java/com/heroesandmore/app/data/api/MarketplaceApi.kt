@@ -164,6 +164,17 @@ interface MarketplaceApi {
     @GET("marketplace/auctions/platform/")
     suspend fun getPlatformAuctionEvents(): Response<List<AuctionEventDto>>
 
+    @GET("marketplace/auctions/platform/{slug}/")
+    suspend fun getPlatformAuctionDetail(
+        @Path("slug") slug: String
+    ): Response<AuctionEventDto>
+
+    @GET("marketplace/auctions/platform/{slug}/lots/")
+    suspend fun getPlatformAuctionLots(
+        @Path("slug") slug: String,
+        @Query("page") page: Int = 1
+    ): Response<PaginatedResponse<ListingDto>>
+
     // Lot submissions
     @POST("marketplace/auctions/platform/{slug}/submit/")
     suspend fun submitAuctionLot(
@@ -173,6 +184,13 @@ interface MarketplaceApi {
 
     @GET("marketplace/auctions/submissions/")
     suspend fun getMySubmissions(): Response<List<AuctionLotSubmissionDto>>
+
+    // My active listings (for lot submission picker)
+    @GET("marketplace/listings/")
+    suspend fun getMyActiveListings(
+        @Query("mine") mine: Boolean = true,
+        @Query("status") status: String = "active"
+    ): Response<PaginatedResponse<ListingDto>>
 
     // Auto-bid
     @POST("marketplace/listings/{id}/autobid/")

@@ -67,7 +67,10 @@ interface MarketplaceRepository {
     suspend fun getEndingSoon(): Resource<List<Listing>>
 
     // Platform auctions & submissions
-    suspend fun getPlatformAuctionEvents(): Resource<List<AuctionEventDto>>
-    suspend fun submitAuctionLot(eventSlug: String, listingId: Int): Resource<AuctionLotSubmissionDto>
-    suspend fun getMySubmissions(): Resource<List<AuctionLotSubmissionDto>>
+    suspend fun getPlatformAuctionEvents(): Resource<List<AuctionEvent>>
+    suspend fun getPlatformAuctionDetail(slug: String): Resource<AuctionEvent>
+    suspend fun getPlatformAuctionLots(slug: String, page: Int = 1): Resource<List<Listing>>
+    suspend fun submitAuctionLot(eventSlug: String, listingId: Int): Resource<AuctionLotSubmission>
+    suspend fun getMySubmissions(): Resource<List<AuctionLotSubmission>>
+    suspend fun getMyActiveListings(): Resource<List<Listing>>
 }

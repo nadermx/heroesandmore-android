@@ -86,6 +86,7 @@ sealed class Screen(val route: String) {
 
     // Seller
     object SellerDashboard : Screen("seller_dashboard")
+    object SellerSetup : Screen("seller_setup")
     object Inventory : Screen("inventory")
     object BulkImport : Screen("bulk_import")
 

@@ -235,16 +235,34 @@ class MarketplaceRepositoryImpl @Inject constructor(
         return result.map { listings -> listings.map { it.toListing() } }
     }
 
-    override suspend fun getPlatformAuctionEvents(): Resource<List<AuctionEventDto>> {
-        return safeApiCall { marketplaceApi.getPlatformAuctionEvents() }
+    override suspend fun getPlatformAuctionEvents(): Resource<List<AuctionEvent>> {
+        val result = safeApiCall { marketplaceApi.getPlatformAuctionEvents() }
+        return result.map { events -> events.map { it.toAuctionEvent() } }
     }
 
-    override suspend fun submitAuctionLot(eventSlug: String, listingId: Int): Resource<AuctionLotSubmissionDto> {
-        return safeApiCall { marketplaceApi.submitAuctionLot(eventSlug, SubmitLotRequest(listingId)) }
+    override suspend fun getPlatformAuctionDetail(slug: String): Resource<AuctionEvent> {
+        val result = safeApiCall { marketplaceApi.getPlatformAuctionDetail(slug) }
+        return result.map { it.toAuctionEvent() }
     }
 
-    override suspend fun getMySubmissions(): Resource<List<AuctionLotSubmissionDto>> {
-        return safeApiCall { marketplaceApi.getMySubmissions() }
+    override suspend fun getPlatformAuctionLots(slug: String, page: Int): Resource<List<Listing>> {
+        val result = safeApiCall { marketplaceApi.getPlatformAuctionLots(slug, page) }
+        return result.map { response -> response.results.map { it.toListing() } }
+    }
+
+    override suspend fun submitAuctionLot(eventSlug: String, listingId: Int): Resource<AuctionLotSubmission> {
+        val result = safeApiCall { marketplaceApi.submitAuctionLot(eventSlug, SubmitLotRequest(listingId)) }
+        return result.map { it.toAuctionLotSubmission() }
+    }
+
+    override suspend fun getMySubmissions(): Resource<List<AuctionLotSubmission>> {
+        val result = safeApiCall { marketplaceApi.getMySubmissions() }
+        return result.map { submissions -> submissions.map { it.toAuctionLotSubmission() } }
+    }
+
+    override suspend fun getMyActiveListings(): Resource<List<Listing>> {
+        val result = safeApiCall { marketplaceApi.getMyActiveListings() }
+        return result.map { response -> response.results.map { it.toListing() } }
     }
 
     // Mapping functions
@@ -263,7 +281,8 @@ class MarketplaceRepositoryImpl @Inject constructor(
         views = views,
         created = created,
         quantityAvailable = quantityAvailable ?: 1,
-        isPlatformListing = isPlatformListing
+        isPlatformListing = isPlatformListing,
+        sellerIsTrusted = sellerIsTrusted
     )
 
     private fun ListingDetailDto.toListingDetail(): ListingDetail = ListingDetail(
@@ -364,5 +383,35 @@ class MarketplaceRepositoryImpl @Inject constructor(
         text = text,
         reviewerUsername = reviewerUsername,
         created = created
+    )
+
+    private fun AuctionEventDto.toAuctionEvent(): AuctionEvent = AuctionEvent(
+        id = id,
+        title = title,
+        description = description,
+        startTime = startTime,
+        endTime = endTime,
+        lotCount = lotCount,
+        isLive = isLive,
+        status = status,
+        created = created,
+        slug = slug,
+        isPlatformEvent = isPlatformEvent,
+        cadence = cadence,
+        acceptingSubmissions = acceptingSubmissions,
+        submissionDeadline = submissionDeadline
+    )
+
+    private fun AuctionLotSubmissionDto.toAuctionLotSubmission(): AuctionLotSubmission = AuctionLotSubmission(
+        id = id,
+        listingId = listingId,
+        listingTitle = listingTitle,
+        listingImage = listingImage,
+        eventName = eventName,
+        eventSlug = eventSlug,
+        status = status,
+        staffNotes = staffNotes,
+        submittedAt = submittedAt,
+        reviewedAt = reviewedAt
     )
 }

@@ -119,6 +119,9 @@ dependencies {
     // Stripe (Payments)
     implementation("com.stripe:stripe-android:20.37.0")
 
+    // Custom Chrome Tabs (for Stripe onboarding web flow)
+    implementation("androidx.browser:browser:1.7.0")
+
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-messaging-ktx")

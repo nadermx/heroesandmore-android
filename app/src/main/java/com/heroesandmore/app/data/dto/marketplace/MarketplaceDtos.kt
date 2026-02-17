@@ -27,7 +27,9 @@ data class ListingDto(
     @SerializedName("quantity_available")
     val quantityAvailable: Int? = null,
     @SerializedName("is_platform_listing")
-    val isPlatformListing: Boolean = false
+    val isPlatformListing: Boolean = false,
+    @SerializedName("seller_is_trusted")
+    val sellerIsTrusted: Boolean = false
 )
 
 data class ListingDetailDto(
