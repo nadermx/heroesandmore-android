@@ -1,7 +1,13 @@
 package com.heroesandmore.app.data.api
 
+import com.heroesandmore.app.BuildConfig
 import com.heroesandmore.app.data.local.TokenManager
+import com.google.gson.Gson
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -9,10 +15,15 @@ class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
 
+    private val gson = Gson()
+
+    // Separate client for refresh calls to avoid interceptor loop
+    private val refreshClient = OkHttpClient.Builder().build()
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        // Skip auth for login/register endpoints
+        // Skip auth for login/register/refresh endpoints
         if (originalRequest.url.encodedPath.contains("/auth/token") ||
             originalRequest.url.encodedPath.contains("/register")) {
             return chain.proceed(originalRequest)
@@ -44,12 +55,57 @@ class AuthInterceptor @Inject constructor(
                     return chain.proceed(newRequest)
                 }
 
-                // TODO: Implement token refresh logic here
-                // For now, just clear tokens and let user re-login
-                // tokenManager.clearTokens()
+                // Attempt token refresh
+                val refreshToken = tokenManager.getRefreshToken()
+                if (refreshToken != null) {
+                    val newAccessToken = attemptTokenRefresh(refreshToken)
+                    if (newAccessToken != null) {
+                        // Refresh succeeded, retry original request
+                        response.close()
+                        val newRequest = originalRequest.newBuilder()
+                            .header("Authorization", "Bearer $newAccessToken")
+                            .build()
+                        return chain.proceed(newRequest)
+                    }
+                }
+
+                // Refresh failed or no refresh token — clear tokens to force re-login
+                tokenManager.clearTokens()
             }
         }
 
         return response
     }
+
+    private fun attemptTokenRefresh(refreshToken: String): String? {
+        return try {
+            val body = gson.toJson(mapOf("refresh" to refreshToken))
+                .toRequestBody("application/json".toMediaType())
+
+            val request = Request.Builder()
+                .url("${BuildConfig.API_BASE_URL}auth/token/refresh/")
+                .post(body)
+                .build()
+
+            val response = refreshClient.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    val tokens = gson.fromJson(responseBody, TokenRefreshResponse::class.java)
+                    tokenManager.saveTokens(tokens.access, tokens.refresh ?: refreshToken)
+                    tokens.access
+                } else null
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private data class TokenRefreshResponse(
+        val access: String,
+        val refresh: String?
+    )
 }
