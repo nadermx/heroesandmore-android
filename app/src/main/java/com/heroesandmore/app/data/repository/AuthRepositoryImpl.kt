@@ -48,7 +48,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun register(username: String, email: String, password: String): Resource<User> {
-        val result = safeApiCall { authApi.register(RegisterRequest(username, email, password)) }
+        val result = safeApiCall { authApi.register(RegisterRequest(username, email, password, password)) }
         return when (result) {
             is Resource.Success -> {
                 result.data?.let { _ ->
@@ -124,8 +124,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun confirmPasswordReset(token: String, newPassword: String): Resource<Boolean> {
-        val result = safeApiCall { authApi.confirmPasswordReset(PasswordResetConfirmRequest(token, newPassword)) }
+    override suspend fun confirmPasswordReset(uid: String, token: String, newPassword: String): Resource<Boolean> {
+        val result = safeApiCall { authApi.confirmPasswordReset(PasswordResetConfirmRequest(uid, token, newPassword, newPassword)) }
         return when (result) {
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to reset password")
@@ -135,7 +135,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Boolean> {
-        val result = safeApiCall { authApi.changePassword(ChangePasswordRequest(oldPassword, newPassword)) }
+        val result = safeApiCall { authApi.changePassword(ChangePasswordRequest(oldPassword, newPassword, newPassword)) }
         return when (result) {
             is Resource.Success -> Resource.success(true)
             is Resource.Error -> Resource.error(result.message ?: "Failed to change password")

@@ -10,7 +10,9 @@ data class LoginRequest(
 data class RegisterRequest(
     val username: String,
     val email: String,
-    val password: String
+    val password: String,
+    @SerializedName("password_confirm")
+    val passwordConfirm: String
 )
 
 data class TokenResponse(
@@ -27,9 +29,12 @@ data class PasswordResetRequest(
 )
 
 data class PasswordResetConfirmRequest(
+    val uid: String,
     val token: String,
     @SerializedName("new_password")
-    val newPassword: String
+    val newPassword: String,
+    @SerializedName("new_password_confirm")
+    val newPasswordConfirm: String
 )
 
 data class GoogleAuthRequest(
@@ -41,5 +46,7 @@ data class ChangePasswordRequest(
     @SerializedName("old_password")
     val oldPassword: String,
     @SerializedName("new_password")
-    val newPassword: String
+    val newPassword: String,
+    @SerializedName("new_password_confirm")
+    val newPasswordConfirm: String
 )

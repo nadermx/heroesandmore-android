@@ -11,7 +11,7 @@ interface AuthRepository {
     suspend fun logout()
     suspend fun googleAuth(idToken: String): Resource<User>
     suspend fun requestPasswordReset(email: String): Resource<Boolean>
-    suspend fun confirmPasswordReset(token: String, newPassword: String): Resource<Boolean>
+    suspend fun confirmPasswordReset(uid: String, token: String, newPassword: String): Resource<Boolean>
     suspend fun changePassword(oldPassword: String, newPassword: String): Resource<Boolean>
     fun isLoggedIn(): Boolean
     fun getAuthStateFlow(): Flow<Boolean>
